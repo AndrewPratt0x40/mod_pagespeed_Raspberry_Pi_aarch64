@@ -157,7 +157,7 @@ def mod_pagespeed_dependencies():
         url = "https://chromium.googlesource.com/chromium/deps/libjpeg_turbo/+archive/%s.tar.gz" % LIBJPEG_TURBO_COMMIT,
         build_file_content = libjpeg_turbo_build_rule,
         # TODO(oschaaf): somehow sha's diverage between here and Travis.
-        sha256 = LIBJPEG_TURBO_SHA,
+        #sha256 = LIBJPEG_TURBO_SHA,
     )
 
     http_archive(
