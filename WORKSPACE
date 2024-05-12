@@ -29,6 +29,13 @@ http_archive(
 load("@aspect_gcc_toolchain//toolchain:defs.bzl", "ARCHS", "gcc_register_toolchain")
 
 gcc_register_toolchain(
+    name = "gcc_toolchain_x86_64",
+    gcc_version = "10.3.0",
+    sysroot_variant = "x86_64",
+    target_arch = ARCHS.x86_64,
+)
+
+gcc_register_toolchain(
     name = "gcc_toolchain_aarch64",
     gcc_version = "10.3.0",
     sysroot_variant = "aarch64",
