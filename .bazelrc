@@ -6,14 +6,6 @@ build --incompatible_enable_cc_toolchain_resolution
 
 # optional, but preferred for performance as per https://github.com/aspect-build/gcc-toolchain/issues/85
 build --experimental_reuse_sandbox_directories
-
-build --host_platform=@http_archive//platforms:aarch64_linux
-build --extra_execution_platforms=@http_archive//platforms:aarch64_linux
-build --cpu k8 # Force host platforms other than Linux to use this configuration.
-build --crosstool_top=@gcc_toolchain_aarch64//:_cc_toolchain # Allows the toolchain resolution for --cpu k8.
-build --strategy=remote
-build --genrule_strategy=remote
-build --spawn_strategy=remote
 # END gcc-toolchain SPECIFIC
 
 # The following .bazelrc content is forked from the main Envoy repository.                  # unique
