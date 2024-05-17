@@ -187,7 +187,11 @@ function run_with_log() {
     "$@" 2>&1 | tee -a "$log_filename"
     rc=${PIPESTATUS[0]}
   else
+    echo "PRE BAD COMMAND"
+    echo "@: $@"
+    echo "log_filename: $log_filename"
     "$@" >> "$log_filename" 2>&1 || { rc=$?; true; }
+    echo "POST BAD COMMAND"
   fi
   echo "[$(date '+%k:%M:%S')] Completed with exit status $rc" >> "$log_filename"
 

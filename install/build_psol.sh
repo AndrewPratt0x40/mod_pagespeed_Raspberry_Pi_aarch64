@@ -17,17 +17,22 @@
 # Author: cheesy@google.com (Steve Hill)
 #
 # Builds psol tarball from a mod_pagespeed checkout.
+echo "Top of file"
 
 cd $(dirname "$BASH_SOURCE")/..
+echo "About to run build_env.sh"
 source install/build_env.sh || exit 1
+echo "Finished running build_env.sh"
 
 buildtype=Release
 install_deps=true
 run_tests=true
 run_packaging=true
 
+echo "Pre eval set"
 eval set -- "$(getopt --long debug,skip_deps,skip_packaging,skip_tests \
                       -o '' -- "$@")"
+echo "Post eval set"
 
 while [ $# -gt 0 ]; do
   case "$1" in
@@ -50,29 +55,36 @@ if $run_packaging && [ -e psol ] ; then
   exit 1
 fi
 
+echo "Pre install_deps"
 if $install_deps; then
   echo Installing required packages...
   run_with_log log/install_deps.log \
     sudo install/install_required_packages.sh --additional_dev_packages
 fi
+echo "Post install_deps"
 
 echo Building PSOL binaries...
 
 MAKE_ARGS=(V=1 BUILDTYPE=$buildtype)
 
-run_with_log log/gyp.log python build/gyp_chromium --depth=.
+echo "Pre run_with_log"
+#run_with_log log/gyp.log python build/gyp_chromium --depth=.
+echo "Post run_with_log"
 
+echo "Pre run_tests"
 if $run_tests; then
   run_with_log log/psol_build.log make "${MAKE_ARGS[@]}" \
     mod_pagespeed_test pagespeed_automatic_test
 fi
+echo "Post run_tests"
 
 # Using a subshell to contain the cd.
 mps_root=$PWD
 (cd pagespeed/automatic && \
   run_with_log ../../log/psol_automatic_build.log \
-  make "${MAKE_ARGS[@]}" MOD_PAGESPEED_ROOT=$mps_root \
-  CXXFLAGS="-DSERF_HTTPS_FETCHING=1" all)
+  bazel build automatic --host_platform=@aspect_gcc_toolchain//platforms:x86_64_linux --platforms=@aspect_gcc_toolchain//platforms:aarch64_linux -j 10 -c fastbuild)
+  #make "${MAKE_ARGS[@]} -I=./install" MOD_PAGESPEED_ROOT=$mps_root \
+  #CXXFLAGS="-DSERF_HTTPS_FETCHING=1" all)
 
 version_h=out/$buildtype/obj/gen/net/instaweb/public/version.h
 if [ ! -f $version_h ]; then
