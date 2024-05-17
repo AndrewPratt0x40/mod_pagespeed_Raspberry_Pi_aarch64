@@ -60,7 +60,7 @@ echo Building PSOL binaries...
 
 MAKE_ARGS=(V=1 BUILDTYPE=$buildtype)
 
-run_with_log log/gyp.log python build/gyp_chromium --depth=.
+#run_with_log log/gyp.log python build/gyp_chromium --depth=.
 
 if $run_tests; then
   run_with_log log/psol_build.log make "${MAKE_ARGS[@]}" \
@@ -71,8 +71,7 @@ fi
 mps_root=$PWD
 (cd pagespeed/automatic && \
   run_with_log ../../log/psol_automatic_build.log \
-  make "${MAKE_ARGS[@]}" MOD_PAGESPEED_ROOT=$mps_root \
-  CXXFLAGS="-DSERF_HTTPS_FETCHING=1" all)
+  bazel build automatic --host_platform=@aspect_gcc_toolchain//platforms:x86_64_linux --platforms=@aspect_gcc_toolchain//platforms:aarch64_linux
 
 version_h=out/$buildtype/obj/gen/net/instaweb/public/version.h
 if [ ! -f $version_h ]; then
